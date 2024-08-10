@@ -1,0 +1,15 @@
+[build]
+target = "targets/mips-ultra64-cpu.json"
+
+[target.mips-ultra64-cpu]
+rustflags = [
+    "-C",
+    "link-arg=-Tlinker.ld",
+    "-C",
+    "link-arg=--Map=rom.map",
+    "-C",
+    "opt-level=s",
+]
+
+[unstable]
+build-std = ["core"]

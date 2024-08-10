@@ -1,0 +1,7 @@
+/target
+*.bin
+*.map
+*.sym
+*.z64
+*.bak
+*.s

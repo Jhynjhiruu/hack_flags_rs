@@ -1,0 +1,13 @@
+[package]
+name = "hack_flags_rs"
+version = "0.1.0"
+edition = "2021"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
+good_memory_allocator = { version = "0.1.7", default-features = false }
