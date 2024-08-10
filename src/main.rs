@@ -84,10 +84,10 @@ fn do_selection(which: &mut u32) {
     loop {
         vi.clear_framebuffer();
 
-        vi.print_string(3, 3, Colour::WHITE, "Left/right to select which input");
-        vi.print_string(3, 4, Colour::WHITE, "to use, A to confirm");
+        vi.print_string(4, 3, Colour::WHITE, "Left/right to select which input");
+        vi.print_string(4, 4, Colour::WHITE, "to use, A to confirm");
 
-        vi.print_string(3, 5, Colour::WHITE, "Current selection: ");
+        vi.print_string(4, 5, Colour::WHITE, "Current selection: ");
 
         let player_colour = if matches!(
             si.query_controllers()[*which as usize],
@@ -98,8 +98,8 @@ fn do_selection(which: &mut u32) {
             Colour::RED
         };
 
-        vi.print_char(22, 5, player_colour, b'P');
-        vi.print_nibble(23, 5, player_colour, *which as u8 + 1);
+        vi.print_char(23, 5, player_colour, b'P');
+        vi.print_nibble(24, 5, player_colour, *which as u8 + 1);
 
         vi.wait_vsync();
         vi.next_framebuffer();
@@ -124,8 +124,8 @@ fn do_selection(which: &mut u32) {
 
         if inputs.a() && !last_inputs.a() {
             for _ in 0..2 {
-                vi.print_char(22, 5, Colour::GREEN, b'P');
-                vi.print_nibble(23, 5, Colour::GREEN, *which as u8 + 1);
+                vi.print_char(23, 5, Colour::GREEN, b'P');
+                vi.print_nibble(24, 5, Colour::GREEN, *which as u8 + 1);
 
                 vi.wait_vsync();
                 vi.next_framebuffer();
