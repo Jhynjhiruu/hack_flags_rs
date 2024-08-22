@@ -6,11 +6,12 @@ use core::ptr::{addr_of, addr_of_mut, from_raw_parts, from_raw_parts_mut};
 pub mod globals;
 mod interrupts;
 
-use globals::setup_globals;
+use globals::{is_bbplayer, setup_globals};
 use interrupts::setup_ints;
 
 use crate::main;
 use crate::text::Colour;
+use crate::util::phys_to_k1_usize;
 //use crate::util::show;
 use crate::vi::vi;
 //use crate::n64_alloc::ALLOCATOR;
@@ -82,6 +83,9 @@ unsafe extern "C" fn _setup() {
     clear_bss();
     //ALLOCATOR.init(addr_of_mut!(_heap_start), addr_of!(_heap_len).addr());
     setup_globals();
+    if !is_bbplayer() {
+        from_raw_parts_mut::<u32>(phys_to_k1_usize(0x1FC0_07FC) as _, ()).write_volatile(8);
+    }
     setup_ints();
 }
 
