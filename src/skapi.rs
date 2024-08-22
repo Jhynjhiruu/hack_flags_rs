@@ -2,6 +2,9 @@ use core::arch::global_asm;
 use core::ffi::{c_int, c_void};
 use core::mem::MaybeUninit;
 
+use crate::mi::BB_SECURE_EXCEPTION;
+use crate::util::phys_to_k1_u32;
+
 type Result<T> = core::result::Result<T, ()>;
 
 macro_rules! skc_call {
@@ -16,10 +19,10 @@ macro_rules! skc_call {
             "  nop              ",
             "  jr  $ra          ",
             "   nop             ",
-            ".set reorder",
+            ".set reorder       ",
             name = sym $n,
             id = const $e,
-            trap = const 0xA4300014u32 as i32
+            trap = const phys_to_k1_u32(BB_SECURE_EXCEPTION) as i32 // needed because of LLVM shenanigans
         );
     };
 }

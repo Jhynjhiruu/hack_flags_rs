@@ -13,9 +13,9 @@ impl const From<u32> for Colour {
     }
 }
 
-impl const Into<u32> for Colour {
-    fn into(self) -> u32 {
-        self.0
+impl const From<Colour> for u32 {
+    fn from(val: Colour) -> Self {
+        val.0
     }
 }
 
@@ -67,6 +67,13 @@ impl Colour {
 }
 
 impl Vi {
+    pub const LEFT: usize = 2;
+    pub const RIGHT: usize = (WIDTH / CHAR_WIDTH) - Self::LEFT;
+    pub const TOP: usize = 2;
+    pub const BOTTOM: usize = (HEIGHT / CHAR_HEIGHT) - Self::TOP;
+
+    pub const TAB: usize = 2;
+
     pub fn print_char(&mut self, x: usize, y: usize, col: Colour, mut ch: u8) {
         if !(b' '..=b'~').contains(&ch) {
             ch = b'?';
@@ -130,12 +137,33 @@ impl Vi {
 
     pub fn print_u16(&mut self, x: usize, y: usize, col: Colour, val: u16) {
         self.print_u8(x, y, col, (val >> 8) as _);
-        self.print_u8(x + 2, y, col, val as u8);
+        self.print_u8(x + 2, y, col, val as _);
     }
 
-    pub fn print_string(&mut self, x: usize, y: usize, col: Colour, string: &str) {
-        for (index, ch) in string.bytes().enumerate() {
-            self.print_char(x + index, y, col, ch);
+    pub fn print_u32(&mut self, x: usize, y: usize, col: Colour, val: u32) {
+        self.print_u16(x, y, col, (val >> 16) as _);
+        self.print_u16(x + 4, y, col, val as _);
+    }
+
+    pub fn print_string(&mut self, mut x: usize, mut y: usize, col: Colour, string: &str) {
+        for ch in string.bytes() {
+            if ch == b'\n' {
+                y += 1;
+                x = Self::LEFT;
+                continue;
+            } else if ch == b'\t' {
+                x += Self::TAB;
+                continue;
+            }
+
+            if x >= Self::RIGHT {
+                y += 1;
+                x = Self::LEFT;
+            }
+
+            self.print_char(x, y, col, ch);
+
+            x += 1;
         }
     }
 }

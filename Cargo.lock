@@ -3,23 +3,14 @@
 version = 3
 
 [[package]]
-name = "either"
-version = "1.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
-
-[[package]]
-name = "good_memory_allocator"
-version = "0.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1651659e016ea4259760966432aebcc96c81e26743fb018c59585ddd677127e"
-dependencies = [
- "either",
-]
-
-[[package]]
 name = "hack_flags_rs"
 version = "0.1.0"
 dependencies = [
- "good_memory_allocator",
+ "volcell",
 ]
+
+[[package]]
+name = "volcell"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "404778f30d9230a66443b0498cc3a8c6633e294afbdce88221bbae7c9b0817bd"

@@ -1,4 +1,4 @@
-use crate::{data_cache_writeback, io_ptr};
+use crate::{boot::globals::is_bbplayer, data_cache_writeback, io_ptr};
 
 const VI_BASE: u32 = 0x0440_0000;
 
@@ -76,6 +76,10 @@ impl Vi {
 
     pub fn clear_framebuffer(&mut self) {
         self.get_next_framebuffer().fill(0)
+    }
+
+    pub fn blank(&mut self) {
+        self.set_h_video(0);
     }
 
     pub fn wait_vsync(&self) {
@@ -214,7 +218,7 @@ impl Vi {
     pub fn init(&mut self) {
         self.set_ctrl(
             Ctrl::dedither_enable(true)
-                | Ctrl::pixel_advance(1)
+                | Ctrl::pixel_advance(if is_bbplayer() { 1 } else { 3 })
                 | Ctrl::kill_we(false)
                 | Ctrl::aa_mode(AAMode::None)
                 | Ctrl::test_mode(false)
