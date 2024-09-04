@@ -1,7 +1,5 @@
 /target
-*.bin
-*.map
-*.sym
+/disasm
 *.z64
+*.app
 *.bak
-*.s

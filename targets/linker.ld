@@ -10,17 +10,20 @@ MEMORY {
 __int_handler = 0x80000180;
 __entry = 0x80000400;
 
-stack_size = 0x4000;
-
 SECTIONS {
     __romPos = 0;
 
     header_ROM_START = __romPos;
     .hdr : AT(header_ROM_START) {
+        LONG(0x80371240)
         . = 8;
         LONG(__entry)
+        . = 0x40;
+        KEEP(*(.ipl3*));
+        . = ALIGN(16);
     } > DUMMY
-    __romPos = 0x1000;
+    __romPos += SIZEOF(.hdr);
+    __romPos = ALIGN(__romPos, 16);
     header_ROM_END = __romPos;
 
     __romPos = boot_ROM_END;
@@ -96,7 +99,16 @@ SECTIONS {
     } > CACHED
 
     _heap_start = __bss_end;
-    _heap_len = (ORIGIN(CACHED) + LENGTH(CACHED)) - __bss_end - stack_size;
+    _heap_len = (ORIGIN(CACHED) + LENGTH(CACHED)) - __bss_end - SIZEOF(.stack);
+
+    .stack _heap_start + _heap_len (NOLOAD) : {
+        __stack_start = .;
+        KEEP(*(.stack));
+        KEEP(*(.stack*));
+        . = ALIGN(16);
+        __stack_end = .;
+        __stack_size = (__stack_end - __stack_start);
+    } > CACHED
 
     osTvType            = 0x80000300;
     osRomType           = 0x80000304;

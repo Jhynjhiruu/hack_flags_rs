@@ -4,9 +4,9 @@ target = "targets/mips-ultra64-cpu.json"
 [target.mips-ultra64-cpu]
 rustflags = [
     "-C",
-    "link-arg=-Tlinker.ld",
+    "link-arg=-Ttargets/linker.ld",
     "-C",
-    "link-arg=--Map=rom.map",
+    "link-arg=--Map=target/map",
     "-C",
     "opt-level=s",
 ]

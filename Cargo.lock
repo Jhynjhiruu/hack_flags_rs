@@ -6,6 +6,14 @@ version = 3
 name = "hack_flags_rs"
 version = "0.1.0"
 dependencies = [
+ "n64",
+]
+
+[[package]]
+name = "n64"
+version = "0.1.0"
+source = "git+https://github.com/Jhynjhiruu/n64-rs.git#0247993a1f7a69a8f6458ff7ea3bde03446b2103"
+dependencies = [
  "volcell",
 ]
 

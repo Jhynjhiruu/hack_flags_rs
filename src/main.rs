@@ -1,109 +1,13 @@
-#![no_std]
 #![no_main]
-#![feature(asm_experimental_arch)]
-#![feature(asm_const)]
-#![feature(ptr_metadata)]
-#![feature(strict_provenance)]
-#![feature(ptr_as_uninit)]
-#![feature(const_maybe_uninit_zeroed)]
-#![feature(const_trait_impl)]
-#![feature(naked_functions)]
-#![feature(pointer_byte_offsets)]
-#![feature(panic_info_message)]
+#![no_std]
 
-use core::arch::asm;
-use core::ops::Range;
-use core::ptr::from_raw_parts;
-
-//extern crate alloc;
-
-mod boot;
-mod cop0;
-mod joybus;
-mod mi;
-//mod n64_alloc;
-mod pi;
-mod si;
-mod skapi;
-mod text;
-mod util;
-mod vi;
-
-use boot::globals::__osBbHackFlags;
-use cop0::cop0;
-use joybus::ControllerStatus;
-use mi::mi;
-use si::si;
-use text::Colour;
-use vi::vi;
-
-#[macro_export]
-macro_rules! io_ptr {
-    (mut $e:expr) => {
-        core::ptr::from_raw_parts_mut::<u32>($crate::util::phys_to_k1_u32($e) as *mut (), ())
-    };
-    (mut $e:expr; $n:expr) => {
-        core::ptr::from_raw_parts_mut::<[u32]>($crate::util::phys_to_k1_u32($e) as *mut (), $n)
-    };
-}
-
-macro_rules! cache {
-    (data, $n:expr, $e:expr) => {
-        unsafe {
-            asm!(
-                ".set noat",
-                "cache {num}, 0({reg})",
-                ".set at",
-                num = const ($n << 2) | 1,
-                reg = in(reg) $e
-            )
-        }
-    };
-    (instruction, $n:expr, $e:expr) => {
-        unsafe {
-            asm!(
-                ".set noat",
-                "cache {num}, 0({reg})",
-                ".set at",
-                num = const $n << 2,
-                reg = in(reg) $e
-            )
-        }
-    };
-}
-
-pub fn data_cache_writeback<T>(data: &[T]) {
-    let Range { start, end } = data.as_ptr_range();
-
-    for i in (start.addr()..end.addr()).step_by(0x10) {
-        cache!(data, 6, i);
-    }
-}
-
-pub fn data_cache_invalidate<T>(data: &[T]) {
-    let Range { start, end } = data.as_ptr_range();
-
-    for i in (start.addr()..end.addr()).step_by(0x10) {
-        cache!(data, 4, i);
-    }
-}
-
-pub fn instruction_cache_invalidate<T>(data: &[T]) {
-    let Range { start, end } = data.as_ptr_range();
-
-    for i in (start.addr()..end.addr()).step_by(0x20) {
-        cache!(instruction, 4, i);
-    }
-}
-
-macro_rules! print {
-    ($vi:expr, $x:expr, $y:expr, $col:expr, $fmt:expr) => {
-        $vi.print_string($x, $y, $col, $fmt)
-    };
-    ($vi:expr, $x:expr, $y:expr, $col:expr, $fmt:expr, $( $arg:tt )*) => {
-        $vi.print_string($x, $y, $col, &alloc::format!($fmt, $( $arg ),*))
-    };
-}
+use n64::boot::globals::__osBbHackFlags;
+use n64::cop0::cop0;
+use n64::joybus::ControllerStatus;
+use n64::mi::mi;
+use n64::si::si;
+use n64::text::Colour;
+use n64::vi::vi;
 
 const STICK_DIR_CUTOFF: i8 = 40;
 
@@ -200,6 +104,7 @@ fn do_selection(which: &mut u32) {
     }
 }
 
+#[no_mangle]
 fn main() -> ! {
     //print!(vi, 2, 2, Colour::WHITE, "Hello, {}", "World!");
 
@@ -213,5 +118,5 @@ fn main() -> ! {
 
     unsafe { __osBbHackFlags.write(which) };
 
-    skapi::exit();
+    n64::skapi::exit();
 }
