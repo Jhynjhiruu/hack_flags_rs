@@ -53,7 +53,7 @@ rom: $(ROM)
 
 app: $(APP)
 
-asm: disasm/hack_flags_rs_80000400.text.s
+asm: disasm/$(TARGET)_80000400.text.s
 
 disasm/%.s: rom
 	$(SPIMDISASM) $(SPIMFLAGS)
