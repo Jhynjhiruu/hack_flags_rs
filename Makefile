@@ -43,7 +43,7 @@ RUST_OBJ := $(BUILD_DIR)/$(TARGET)
 $(TARGET_DIR)/%.bin: $(RUST_OBJ)
 	$(OBJCOPY) -O binary $< $@
 
-$(RUST_OBJ):
+$(RUST_OBJ): targets/linker.ld Cargo.toml build.rs src/main.rs
 	$(CARGO) build $(MODE_FLAG) $(CARGOFLAGS)
 
 $(APP): $(ROM)
